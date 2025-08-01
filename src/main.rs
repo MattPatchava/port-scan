@@ -16,10 +16,14 @@ struct Args {
 }
 
 fn main() {
-    let args: Args = Args::parse();
+    if let Err(e) = run() {
+        eprintln!("{}", e);
+        std::process::exit(1);
+    }
+}
 
-    // TODO: Parse target into IP address struct and use this for later access (rather than the
-    // args struct)
+fn run() -> Result<()> {
+    let args: Args = Args::parse();
 
     let start_port: u16 = args.start_port;
     let end_port: u16 = match args.end_port {
@@ -27,10 +31,10 @@ fn main() {
         None => start_port,
     };
 
-    println!(
-        "IP to scan: {}, port(s) to scan: {} to {} (inclusive)",
-        args.target, start_port, end_port
-    );
+    let targets: Vec<SocketAddr> = resolve_target(&args.target, start_port)?;
+
+    Ok(())
+}
 
 fn resolve_target(target: &str, port: u16) -> Result<Vec<SocketAddr>> {
     let targets: Vec<SocketAddr> = match parse_as_ip(target, port) {
