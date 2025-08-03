@@ -17,7 +17,7 @@ pub fn resolve_target(target: &str, port: u16) -> Result<Vec<SocketAddr>> {
                 println!("Resolved DNS input:\n{}", as_string);
                 addrs
             }
-            Err(e) => return Err(e).context(format!("DNS resolution failed for \"{}\"", target)),
+            Err(e) => return Err(e).context(format!("Unable to parse input \"{}\" as an IP address or resolve with DNS. Check the input is valid and try again.", target)),
         },
     };
 
